@@ -1,6 +1,5 @@
 const Book = require('../models/Book');
 
-// GET all books
 exports.getAllBooks = async (req, res) => {
   try {
     const books = await Book.find();
@@ -10,7 +9,6 @@ exports.getAllBooks = async (req, res) => {
   }
 };
 
-// GET one book by id
 exports.getOneBook = async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
@@ -21,10 +19,16 @@ exports.getOneBook = async (req, res) => {
   }
 };
 
-// POST create a book
 exports.createBook = async (req, res) => {
   try {
-    const book = new Book({ ...req.body });
+    const bookObject = JSON.parse(req.body.book);
+    delete bookObject._id;
+    delete bookObject._userId;
+    const book = new Book({
+      ...bookObject,
+      userId: req.auth.userId,
+      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    });
     await book.save();
     res.status(201).json({ message: 'Livre créé avec succès' });
   } catch (err) {
@@ -32,7 +36,6 @@ exports.createBook = async (req, res) => {
   }
 };
 
-// PUT update a book
 exports.updateBook = async (req, res) => {
   try {
     await Book.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id });
@@ -42,7 +45,6 @@ exports.updateBook = async (req, res) => {
   }
 };
 
-// DELETE a book
 exports.deleteBook = async (req, res) => {
   try {
     await Book.deleteOne({ _id: req.params.id });
