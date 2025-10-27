@@ -53,3 +53,24 @@ exports.deleteBook = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+
+exports.rateBook = async (req, res) => {
+  try {
+    const { rating } = req.body;
+    const userId = req.auth.userId;
+    const book = await Book.findById(req.params.id);
+    if (!book) return res.status(404).json({ message: 'Livre introuvable' });
+
+    const existingRating = book.ratings.find(r => r.userId === userId);
+    if (existingRating) return res.status(400).json({ message: 'Vous avez déjà noté ce livre' });
+
+    book.ratings.push({ userId, grade: rating });
+    const total = book.ratings.reduce((acc, r) => acc + r.grade, 0);
+    book.averageRating = total / book.ratings.length;
+
+    await book.save();
+    res.status(200).json(book);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
