@@ -9,6 +9,7 @@ const bookRoutes = require('./routes/books');
 
 const app = express();
 
+
 app.use(cors());
 app.use(express.json());
 app.use('/images', express.static(path.join(__dirname, 'images')));
