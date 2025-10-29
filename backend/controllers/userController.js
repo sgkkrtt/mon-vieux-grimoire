@@ -2,7 +2,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// inscription
 exports.signup = async (req, res) => {
   try {
     const hash = await bcrypt.hash(req.body.password, 10);
@@ -17,7 +16,6 @@ exports.signup = async (req, res) => {
   }
 };
 
-// connexion
 exports.login = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });

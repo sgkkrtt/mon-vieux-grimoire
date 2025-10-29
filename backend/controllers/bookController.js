@@ -74,3 +74,14 @@ exports.rateBook = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+
+exports.getBestRatedBooks = async (req, res) => {
+  try {
+    console.log('→ requête /bestrating reçue');
+    const books = await Book.find().sort({ averageRating: -1 }).limit(3);
+    res.status(200).json(books);
+  } catch (err) {
+    console.error('Erreur dans getBestRatedBooks :', err);
+    res.status(400).json({ error: err.message });
+  }
+};
